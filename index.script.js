@@ -1,39 +1,96 @@
-function insertValue() {
-    let input = document.getElementById("ToDoInput");
-    let value = input.value;
-    let newBlock = document.createElement("div");
-    newBlock.className = "flex mb-4 items-center";
-    let newText = document.createElement("p");
-    newText.className = "w-full text-grey-darkest";
-    let doneButton = document.createElement("button");
-    doneButton.className = "flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green";
-    let removeButton = document.createElement("button");
-    removeButton.className = "flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-white hover:bg-red";
-    newText.innerHTML = value;
-    doneButton.innerHTML = "Done";
-    doneButton.setAttribute("onclick", "markDone(this)");
-    removeButton.innerHTML = "Remove";
-    removeButton.setAttribute("onclick", "removeComponent(this)");
-    let resultContainer = document.getElementById("resultContainer");
-    resultContainer.appendChild(newBlock);
-    newBlock.appendChild(newText);
-    newBlock.appendChild(doneButton);
-    newBlock.appendChild(removeButton);
-}
-
-function markDone(button) {
-    let paragraph = button.parentNode.querySelector("p");
-    if(paragraph.classList.contains("line-through")){
-        paragraph.classList.remove("line-through");
-        button.innerHTML = "Not Done";
-    }else{
-        paragraph.classList.add("line-through");
-        button.innerHTML = "Done";
+class TaskBlock {
+    constructor(value) {
+      this.value = value;
+      this.element = this.createBlock();
     }
-    
+  
+    createBlock() {
+      const newBlock = document.createElement("div");
+      newBlock.className = "flex mb-4 items-center";
+  
+      const newText = document.createElement("p");
+      newText.className = "w-full text-grey-darkest";
+      newText.innerHTML = this.value;
+  
+      const doneButton = new DoneButton();
+      const removeButton = new RemoveButton();
+  
+      newBlock.appendChild(newText);
+      newBlock.appendChild(doneButton.element);
+      newBlock.appendChild(removeButton.element);
+  
+      return newBlock;
+    }
 }
-
+  
+class DoneButton {
+    constructor() {
+      this.element = this.createButton();
+    }
+  
+    createButton() {
+      const button = document.createElement("button");
+      button.className = "flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green";
+      button.innerHTML = "Done";
+      button.addEventListener("click", () => this.markDone());
+      return button;
+    }
+  
+    markDone() {
+      const paragraph = this.element.parentNode.querySelector("p");
+      if (paragraph.classList.contains("line-through")) {
+        paragraph.classList.remove("line-through");
+        this.element.innerHTML = "Not Done";
+      } else {
+        paragraph.classList.add("line-through");
+        this.element.innerHTML = "Done";
+      }
+    }
+}
+  
+class RemoveButton {
+    constructor() {
+      this.element = this.createButton();
+    }
+  
+    createButton() {
+      const button = document.createElement("button");
+      button.className = "flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-white hover:bg-red";
+      button.innerHTML = "Remove";
+      button.addEventListener("click", () => this.removeComponent());
+      return button;
+    }
+  
+    removeComponent() {
+      const componentDiv = this.element.parentNode;
+      componentDiv.parentNode.removeChild(componentDiv);
+    }
+}
+  
+function insertValue() {
+    const input = document.getElementById("ToDoInput");
+    const value = input.value;
+    const newTask = new TaskBlock(value);
+  
+    const resultContainer = document.getElementById("resultContainer");
+    resultContainer.appendChild(newTask.element);
+  }
+  
+function markDone(button) {
+    const paragraph = button.parentNode.querySelector("p");
+    if (paragraph.classList.contains("line-through")) {
+      paragraph.classList.remove("line-through");
+      button.innerHTML = "Not Done";
+    } else {
+      paragraph.classList.add("line-through");
+      button.innerHTML = "Done";
+    }
+}
+  
 function removeComponent(button) {
-    let componentDiv = button.parentNode;
+    const componentDiv = button.parentNode;
     componentDiv.parentNode.removeChild(componentDiv);
 }
+  
+
+  
